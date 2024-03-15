@@ -6,16 +6,18 @@ license = "MIT OR Apache-2.0"
 name = "cargo-show"
 readme = "README.md"
 repository = "https://github.com/g-k/cargo-show"
-version = "0.5.9"
-edition = "2018"
+version = "0.6.0"
+edition = "2021"
 
 [[bin]]
 name = "cargo-show"
 path = "src/main.rs"
 
 [dependencies]
+curl = "0.4"
+openssl = "0.10"
 docopt = "1.1.0"
-g-k-crates-io-client = "0.27"
+g-k-crates-io-client = "0.40"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"

@@ -37,7 +37,7 @@ To print package metadata:
 
 \`\`\`sh
 \$ cargo show nonexistent-package servo
-$($CARGO_CMD webrender servo 2>&1)
+$($CARGO_CMD nonexistent-package servo 2>&1)
 \`\`\`
 
 To print JSON:

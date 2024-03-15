@@ -11,6 +11,7 @@
     unstable_features
 )]
 
+extern crate curl;
 extern crate docopt;
 extern crate g_k_crates_io_client as crates_io;
 extern crate serde_json;
@@ -19,6 +20,7 @@ extern crate serde_derive;
 
 use std::fmt;
 use std::process;
+use curl::easy::Easy;
 
 static DEFAULT: &'static str = "https://crates.io";
 
@@ -184,9 +186,10 @@ impl fmt::Display for CrateDependencyKind {
 
 /// fetches and prints package metadata from crates.io
 fn print_crate_metadata(crate_name: &str, as_json: bool, with_deps: bool) -> Result<(), String> {
-    let mut req = crates_io::Registry::new(DEFAULT.to_string(), None);
+    let handle = Easy::new();
+    let mut reg = crates_io::Registry::new_handle(String::from(DEFAULT), None, handle, false);
 
-    let response = req
+    let response = reg
         .get_crate_data(crate_name)
         .map_err(|e| format!("Error fetching data for {}: {}", crate_name, e))?;
 
@@ -196,7 +199,7 @@ fn print_crate_metadata(crate_name: &str, as_json: bool, with_deps: bool) -> Res
     let meta = meta?.crate_data;
 
     if as_json && with_deps {
-        let response = req
+        let response = reg
             .get_crate_dependencies(&meta.id, &meta.max_version)
             .map_err(|e| format!("Error fetching dependencies for {}: {}", crate_name, e))?;
         println!("{}", response);
@@ -214,7 +217,7 @@ fn print_crate_metadata(crate_name: &str, as_json: bool, with_deps: bool) -> Res
     if with_deps {
         println!("dependencies:");
 
-        let response = req
+        let response = reg
             .get_crate_dependencies(&meta.id, &meta.max_version)
             .map_err(|e| format!("Error fetching dependencies for {}: {}", crate_name, e))?;
 

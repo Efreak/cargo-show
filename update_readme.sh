@@ -12,8 +12,7 @@ cat > README.md <<EOF
 ## cargo-show
 
 [![crates.io version](https://img.shields.io/crates/v/cargo-show.svg)](https://img.shields.io/crates/v/cargo-show.svg)
-[![Build Status](https://travis-ci.org/g-k/cargo-show.svg?branch=master)](https://travis-ci.org/g-k/cargo-show)
-[![Build status](https://ci.appveyor.com/api/projects/status/m9cf5vhft7qwisas?svg=true)](https://ci.appveyor.com/project/g-k/cargo-show)
+[![Build status](https://github.com/g-k/cargo-show/actions/workflows/build.yml/badge.svg)](https://github.com/g-k/cargo-show/actions/workflows/build.yml)
 
 Prints package metadata like pip show, apt-cache show, npm view, gem query, etc.
 
@@ -38,7 +37,7 @@ To print package metadata:
 
 \`\`\`sh
 \$ cargo show nonexistent-package servo
-$($CARGO_CMD webrender servo 2>&1)
+$($CARGO_CMD nonexistent-package servo 2>&1)
 \`\`\`
 
 To print JSON:

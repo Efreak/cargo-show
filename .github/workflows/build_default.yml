@@ -1,0 +1,35 @@
+name: cargo-show - build & test on OSX and Windows
+on:
+  push:
+    branches:
+      - master
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  build_and_test:
+    name: cargo-show - latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: OSX - rust stable
+            os: macos-latest
+            toolchain: stable
+          - name: Windows - rust stable
+            os: windows-latest
+            toolchain: stable
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.toolchain == 'nightly' }}
+    steps:
+      - uses: actions/checkout@v3
+      - run: rustup set profile minimal
+      - run: rustup update --no-self-update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+      - run: echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" | Out-File -FilePath $env:GITHUB_ENV -Append
+        if: ${{ matrix.os == 'windows-latest' }}
+      - run: vcpkg install openssl:x64-windows-static-md
+        if: ${{ matrix.os == 'windows-latest' }}
+      - run: cargo build --verbose
+      - run: cargo test --verbose

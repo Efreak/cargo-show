@@ -11,7 +11,7 @@ cargo install cargo-show &> ./cargo-show-install.log
 cat > README.md <<EOF
 ## cargo-show
 
-[![crates.io version](https://img.shields.io/crates/v/cargo-show.svg)](https://img.shields.io/crates/v/cargo-show.svg)
+[![crates.io version](https://img.shields.io/crates/v/cargo-show.svg)](https://crates.io/crates/cargo-show)
 [![Build status](https://github.com/g-k/cargo-show/actions/workflows/build.yml/badge.svg)](https://github.com/g-k/cargo-show/actions/workflows/build.yml)
 
 Prints package metadata like pip show, apt-cache show, npm view, gem query, etc.

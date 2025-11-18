@@ -1,0 +1,34 @@
+name: goreleaser
+
+on:
+  release:
+  workflow_dispatch:
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # we'll need this for both 'zig build' and 'cargo zigbuild'
+      - uses: mlugg/setup-zig@v1
+
+      # only needed if using SBOMs
+      - uses: anchore/sbom-action/download-syft@v0.17.9
+
+      - uses: goreleaser/goreleaser-action@v6
+        with:
+          # either 'goreleaser' (default) or 'goreleaser-pro'
+          distribution: goreleaser
+          # 'latest', 'nightly', or a semver
+          version: "~> v2"
+          args: release --clean -f .github/goreleaser.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # used to push the homebrew tap
+          GH_PAT: ${{ secrets.GH_PAT }}
+          # Your GoReleaser Pro key.
+          # Only needed if you're using the 'goreleaser-pro' distribution.
+          # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}

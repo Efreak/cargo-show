@@ -31,6 +31,7 @@ jobs:
       - name: Add NuGet sources
         shell: cmd
         run: |
+          powershell -c "git clone https://github.com/microsoft/vcpkg --single-branch --branch (Invoke-RestMethod -Uri https://api.github.com/repos/microsoft/vcpkg/releases/latest | Select-Object -ExpandProperty tag_name)"
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat
           .$(${{ env.VCPKG_EXE }} fetch nuget) `
             sources add `

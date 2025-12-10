@@ -7,6 +7,10 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
+  USERNAME: efreak
+  VCPKG_EXE: ${{ github.workspace }}/vcpkg/vcpkg
+  FEED_URL: https://nuget.pkg.github.com/efreak/index.json
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/efreak/index.json,readwrite"
 
 jobs:
   build_and_test:
@@ -24,6 +28,21 @@ jobs:
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.toolchain == 'nightly' }}
     steps:
+      - name: Add NuGet sources
+        shell: pwsh
+        run: |
+          .$(${{ env.VCPKG_EXE }} fetch nuget) `
+            sources add `
+            -Source "${{ env.FEED_URL }}" `
+            -StorePasswordInClearText `
+            -Name GitHubPackages `
+            -UserName "${{ env.USERNAME }}" `
+            -Password "${{ secrets.VCPKG_PAT_TOKEN }}"
+          .$(${{ env.VCPKG_EXE }} fetch nuget) `
+            setapikey "${{ secrets.GITHUB_TOKEN }}" `
+            -UserName "${{ env.USERNAME }}" `
+            -Password "${{ secrets.VCPKG_PAT_TOKEN }}" `
+            -Source "${{ env.FEED_URL }}"
       - uses: actions/checkout@v3
       - run: rustup set profile minimal
       - run: rustup update --no-self-update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
@@ -33,3 +52,5 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
       - run: cargo build --verbose
       - run: cargo test --verbose
+permissions:
+  packages: write
